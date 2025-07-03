@@ -222,7 +222,7 @@ const researchSection = `
       <span id="research-text-content"></span>
       <button id="view-paper-btn" class="send-btn-card" style="margin-top:12px;">View Paper</button>
     </div>
-    <div class="research-ascii" style="flex:0 0 260px;max-width:260px;overflow-x:auto;">
+    <div class="research-ascii" style="flex:0 0 260px;max-width:260px;overflow-x:auto;display:var(--ascii-display, flex);">
       <pre id="research-ascii-art" style="color:var(--accent);font-size:0.95em;line-height:1.1;white-space:pre;word-break:break-all;margin:0;">
 
 
@@ -245,7 +245,7 @@ const sections = {
       <!-- TYPING EFFECT TARGET: about-text-content -->
       <span id="about-text-content"></span>
     </div>
-    <div class="about-ascii" style="flex:0 0 260px;max-width:260px;overflow-x:auto;">
+    <div class="about-ascii" style="flex:0 0 260px;max-width:260px;overflow-x:auto;display:var(--ascii-display, flex);">
       <pre id="about-cat-ascii" style="color:var(--accent);font-size:0.95em;line-height:1.1;white-space:pre;word-break:break-all;margin:0;">
               _                       
              \\ \`*-.                   
@@ -300,7 +300,7 @@ const sections = {
         </tbody>
       </table>
     </div>
-    <div class="skills-ascii" style="flex:0 0 260px;max-width:260px;overflow-x:auto;">
+    <div class="skills-ascii" style="flex:0 0 260px;max-width:260px;overflow-x:auto;display:var(--ascii-display, flex);">
       <pre id="skills-dog-ascii" style="color:var(--accent);font-size:1.00em;line-height:1.1;white-space:pre;word-break:break-all;margin:0;">
       ─▄▀─▄▀
       ──▀──▀
@@ -320,7 +320,7 @@ const sections = {
   research: researchSection,
 };
 
-const helpText = `Available commands:\nabout\nskills\nprojects\nresearch\nresume\ncontact\ngames\nrun --all\nclear\ntheme\nhelp`;
+const helpText = `<span style="color:var(--accent)">Available commands:\nabout\nskills\nprojects\nresearch\nresume\ncontact\ngames\nrun --all\nclear\ntheme\nhelp</span>`;
 
 const terminalOutput = document.getElementById('terminal-output');
 const terminalInput = document.getElementById('terminal-input');
@@ -521,7 +521,7 @@ function printToTerminal(text, typing = false) {
     // Get the research text content span
     const researchTextSpan = container.querySelector('#research-text-content');
     // The text to type (the actual research text)
-    const researchText = `<span style=\"color:var(--accent)\"><b style=\"white-space:nowrap;\">Hybrid Forecasting Framework for Ocean Acidification and Hypoxia</b><br><b>Role:</b> Research Lead<br><b>Tools:</b> ARIMA, LSTM, Python, GLODAP, SOCAT, IoT, Geospatial Dashboard<br><br>Developed a real-time multivariate forecasting system for predicting ocean acidification and hypoxic events in coastal regions using a hybrid ARIMA-LSTM layered stack. This ensemble model combines:<br>- ARIMA for statistical time series forecasting<br>- LSTM for modeling complex, nonlinear patterns<br><br>The model was trained on historical datasets (GLODAP, SOCAT) and real-time IoT sensor data to predict critical oceanographic indicators such as pH, dissolved oxygen, and dissolved inorganic carbon.<br><br>The results were presented through an interactive geospatial dashboard to support decision-making for environmental monitoring and intervention.<br><br>The proposed hybrid approach outperformed standalone models in prediction accuracy and contributes to scalable, sustainable marine ecosystem management, aligning with UN Sustainable Development Goals 13 (Climate Action) and 14 (Life Below Water).</span>`;
+    const researchText = `<span style=\"color:var(--accent)\"><b>Hybrid Forecasting Framework for Ocean Acidification and Hypoxia</b><br><b>Role:</b> Research Lead<br><b>Tools:</b> ARIMA, LSTM, Python, GLODAP, SOCAT, IoT, Geospatial Dashboard<br><br>Developed a real-time multivariate forecasting system for predicting ocean acidification and hypoxic events in coastal regions using a hybrid ARIMA-LSTM layered stack. This ensemble model combines:<br>- ARIMA for statistical time series forecasting<br>- LSTM for modeling complex, nonlinear patterns<br><br>The model was trained on historical datasets (GLODAP, SOCAT) and real-time IoT sensor data to predict critical oceanographic indicators such as pH, dissolved oxygen, and dissolved inorganic carbon.<br><br>The results were presented through an interactive geospatial dashboard to support decision-making for environmental monitoring and intervention.<br><br>The proposed hybrid approach outperformed standalone models in prediction accuracy and contributes to scalable, sustainable marine ecosystem management, aligning with UN Sustainable Development Goals 13 (Climate Action) and 14 (Life Below Water).</span>`;
     // Add the container to the terminal output
     terminalOutput.appendChild(container);
     // Typing effect for research text only
@@ -536,6 +536,16 @@ function printToTerminal(text, typing = false) {
             i++;
             setTimeout(typeNext, 2);
           } else {
+            // Always ensure the View Paper button is present
+            let btn = container.querySelector('#view-paper-btn');
+            if (!btn) {
+              btn = document.createElement('button');
+              btn.id = 'view-paper-btn';
+              btn.className = 'send-btn-card';
+              btn.style.marginTop = '12px';
+              btn.textContent = 'View Paper';
+              researchTextSpan.parentNode.appendChild(btn);
+            }
             resolve();
           }
         }
@@ -543,6 +553,16 @@ function printToTerminal(text, typing = false) {
       });
     } else {
       researchTextSpan.innerHTML = researchText;
+      // Always ensure the View Paper button is present
+      let btn = container.querySelector('#view-paper-btn');
+      if (!btn) {
+        btn = document.createElement('button');
+        btn.id = 'view-paper-btn';
+        btn.className = 'send-btn-card';
+        btn.style.marginTop = '12px';
+        btn.textContent = 'View Paper';
+        researchTextSpan.parentNode.appendChild(btn);
+      }
       scrollTerminalToBottom();
       return Promise.resolve();
     }
@@ -830,7 +850,12 @@ function handleCommand(cmd) {
     // Only print ASCII art for sections that have it and are not 'projects' or 'skills'
     if (command !== 'projects' && command !== 'skills') {
       if (command === 'resume') {
-        printToTerminal(`<span style=\"color:${getAsciiArtColor()}\" data-ascii-art>${asciiArt.resume}</span>`);
+        // Mobile: show section name instead of ASCII art
+        if (isMobile) {
+          printToTerminal(`<span style="color:var(--accent);font-size:1.5em;font-weight:bold;text-transform:uppercase;">${command}</span>`);
+        } else {
+          printToTerminal(`<span style=\"color:${getAsciiArtColor()}\" data-ascii-art>${asciiArt.resume}</span>`);
+        }
         // Typing effect for resume section message
         const resumeMessage = 'For details on certifications and achievements, please refer to the full resume :';
         const container = document.createElement('div');
@@ -862,11 +887,21 @@ function handleCommand(cmd) {
         typeNext();
         return;
       } else if (command === 'research') {
-        printToTerminal(`<span style=\"color:${getAsciiArtColor()}\" data-ascii-art>${asciiArt.research}</span>`);
+        // Mobile: show section name instead of ASCII art
+        if (isMobile) {
+          printToTerminal(`<span style="color:var(--accent);font-size:1.5em;font-weight:bold;text-transform:uppercase;">${command}</span>`);
+        } else {
+          printToTerminal(`<span style=\"color:${getAsciiArtColor()}\" data-ascii-art>${asciiArt.research}</span>`);
+        }
         printToTerminal(sections[command], true);
         return;
       } else {
-        printToTerminal(`<span style=\"color:${getAsciiArtColor()}\" data-ascii-art>${asciiArt[command]}</span>`);
+        // Mobile: show section name instead of ASCII art
+        if (isMobile) {
+          printToTerminal(`<span style="color:var(--accent);font-size:1.5em;font-weight:bold;text-transform:uppercase;">${command}</span>`);
+        } else {
+          printToTerminal(`<span style=\"color:${getAsciiArtColor()}\" data-ascii-art>${asciiArt[command]}</span>`);
+        }
       }
     }
     if (command === 'contact') {
@@ -880,16 +915,19 @@ function handleCommand(cmd) {
       contactMode = false;
       editingContact = false;
       terminalInput.classList.remove('hidden');
-      // Show projects section with animation if not shown before
-      const shouldAnimate = !projectCardsAnimated;
-      // Print the projects ASCII art with forced orange color
-      printToTerminal(`<span style=\"color:${getAsciiArtColor()}\">${asciiArt.projects}</span>`);
-      showSection('projects', false, !shouldAnimate, true); // pass a flag to skip ascii in showSection
+      // --- FIX: Only print Projects ASCII art or title in showSection, not here ---
+      // Do NOT print ASCII art or section title here for 'projects' command
+      showSection('projects', false, undefined, true); // always pass showAscii true for consistency
     } else if (command === 'skills') {
       contactMode = false;
       editingContact = false;
       terminalInput.classList.remove('hidden');
       // Print the ASCII art header for skills
+      if (isMobile) {
+        printToTerminal(`<span style="color:var(--accent);font-size:1.5em;font-weight:bold;text-transform:uppercase;">${command}</span>`);
+      } else {
+        printToTerminal(`<span style=\"color:${getAsciiArtColor()}\">${asciiArt.skills}</span>`);
+      }
       // Print the full skills section, including ASCII art and table
       printToTerminal(sections[command], false);
       return;
@@ -984,17 +1022,19 @@ function handleCommand(cmd) {
 }
 
 function listGames() {
-  printToTerminal('<span style="color:var(--ffb86c)">Available games:</span>', true);
+  // Section header in orange
+  printToTerminal('<span style="color:var(--accent)">Available games:</span>', true);
   setTimeout(() => {
-    printToTerminal('<span style="color:var(--info)">snake</span> - Classic snake game', true);
+    // Game names in cyan (dark), blue (light), green (hacker)
+    printToTerminal('<span style="color:var(--info)">snake</span> <span style="color:var(--accent)">- Classic snake game</span>', true);
     setTimeout(() => {
-      printToTerminal('<span style="color:var(--info)">tetris</span> - Classic tetris game', true);
+      printToTerminal('<span style="color:var(--info)">tetris</span> <span style="color:var(--accent)">- Classic tetris game</span>', true);
       setTimeout(() => {
-        printToTerminal('<span style="color:var(--info)">2048</span> - Play 2048 puzzle', true);
+        printToTerminal('<span style="color:var(--info)">2048</span> <span style="color:var(--accent)">- Play 2048 puzzle</span>', true);
         setTimeout(() => {
-          printToTerminal('<span style="color:var(--info)">whack</span> - Whack-a-Mole reflex game', true);
+          printToTerminal('<span style="color:var(--info)">whack</span> <span style="color:var(--accent)">- Whack-a-Mole reflex game</span>', true);
           setTimeout(() => {
-            printToTerminal('<span style="color:var(--ffb86c)">Type the game name to play, or <b>stop</b> to exit game mode.</span>', true);
+            printToTerminal('<span style="color:var(--accent)">Type the game name to play, or <b>stop</b> to exit game mode.</span>', true);
           }, 600);
         }, 600);
       }, 600);
@@ -1005,19 +1045,26 @@ function listGames() {
 // --- SMOOTH RUN --ALL ---
 async function runAllSections() {
   runAllActive = true;
-  await showSection('about', true);
-  await showSection('skills', true);
+  // On mobile: only show title; on desktop/tablet: show only ascii art
+  const showAscii = !isMobile;
+  await showSection('about', true, undefined, showAscii);
+  await showSection('skills', true, undefined, showAscii);
   await delay(1500);
-  // Show projects section with animation if not shown before
-  const shouldAnimate = !projectCardsAnimated;
-  await showSection('projects', false, !shouldAnimate);
+  await showSection('projects', false, undefined, showAscii);
   await delay(2000);
-  // Show research section after projects
-  await showSection('research', true);
-  await delay(2000);
-  await showSection('resume', true);
+  await showSection('research', true, undefined, showAscii);
+  await delay(2000); // Ensure research is fully rendered
+  // Insert a break/divider before resume
+  const divider = document.createElement('div');
+  divider.style.height = '24px';
+  divider.style.width = '100%';
+  divider.style.clear = 'both';
+  divider.style.display = 'block';
+  terminalOutput.appendChild(divider);
+  scrollTerminalToBottom();
+  await showSection('resume', true, undefined, showAscii);
   await delay(1500);
-  await showInteractiveContact();
+  await showInteractiveContact(showAscii);
   runAllActive = false;
 }
 
@@ -1032,102 +1079,112 @@ function waitForTyping() {
   });
 }
 
-function showSection(section, typing, noAnimation, skipAscii) {
+function showSection(section, typing, noAnimation, showAscii) {
   return new Promise(async resolve => {
-    if (!skipAscii) {
-      if (section === 'resume') {
+    if (showAscii) {
+      // Show ONLY ASCII art (no section title)
+      if (section === 'projects') {
+        // --- FIX: Only print Projects ASCII art on desktop/tablet, and only section title on mobile ---
+        if (isMobile) {
+          await printToTerminal(`<span style="color:var(--accent);font-size:1.5em;font-weight:bold;text-transform:uppercase;">${section}</span>`);
+        } else {
+          await printToTerminal(`<span style="color:${getAsciiArtColor()}">${asciiArt.projects}</span>`);
+        }
+      } else if (section === 'resume') {
+        // ... existing code ...
         await printToTerminal(`<span style="color:${getAsciiArtColor()}" data-ascii-art>${asciiArt.resume}</span>`);
-        // Typing effect for resume section message
-        const resumeMessage = 'For details on certifications and achievements, please refer to the full resume :';
         const container = document.createElement('div');
         container.style.marginBottom = '0.5em';
         container.style.color = 'var(--accent)';
         container.style.fontFamily = 'inherit';
         container.style.fontSize = '1em';
         container.id = 'resume-section-message';
+        container.innerHTML = 'For details on certifications and achievements, please refer to the full resume : <button id="view-resume-btn" class="send-btn-card" style="margin-left:8px;vertical-align:middle;">View Resume</button>';
         terminalOutput.appendChild(container);
-        let i = 0;
-        function typeNext() {
-          container.textContent = resumeMessage.slice(0, i);
-          scrollTerminalToBottom();
-          if (i <= resumeMessage.length) {
-            i++;
-            setTimeout(typeNext, 18);
-          } else {
-            // After typing, append the button inline
-            const btn = document.createElement('button');
-            btn.id = 'view-resume-btn';
-            btn.className = 'send-btn-card';
-            btn.style.marginLeft = '16px';
-            btn.style.verticalAlign = 'middle';
-            btn.textContent = 'View Resume';
-            container.appendChild(btn);
-            setTimeout(resolve, typing ? 1500 : 2000);
-          }
-        }
-        typeNext();
+        scrollTerminalToBottom();
+        setTimeout(resolve, typing ? 1500 : 2000);
         return;
       } else if (section === 'research') {
+        // ... existing code ...
         await printToTerminal(`<span style="color:${getAsciiArtColor()}" data-ascii-art>${asciiArt.research}</span>`);
-      } else {
+        // Always print the research content and button after ASCII art, on all devices
+        await printToTerminal(sections.research, true);
+        setTimeout(resolve, typing ? 1500 : 2000);
+        return;
+      } else if (section !== 'projects') {
+        // ... existing code ...
         await printToTerminal(`<span style="color:${getAsciiArtColor()}">${asciiArt[section]}</span>`);
+      }
+    } else {
+      // Show ONLY section title styled (no ASCII art)
+      printToTerminal(`<span style="color:var(--accent);font-size:1.5em;font-weight:bold;text-transform:uppercase;">${section}</span>`);
+      // Special handling for resume section on mobile
+      if (section === 'resume') {
+        // Inline message and button after colon
+        const container = document.createElement('div');
+        container.style.marginBottom = '0.5em';
+        container.style.color = 'var(--accent)';
+        container.style.fontFamily = 'inherit';
+        container.style.fontSize = '1em';
+        container.id = 'resume-section-message';
+        container.innerHTML = 'For details on certifications and achievements, please refer to the full resume : <button id="view-resume-btn" class="send-btn-card" style="margin-left:8px;vertical-align:middle;">View Resume</button>';
+        terminalOutput.appendChild(container);
+        scrollTerminalToBottom();
+        setTimeout(resolve, typing ? 1500 : 2000);
+        return;
+      }
+      // Special handling for research section on mobile
+      if (section === 'research') {
+        // Print research content in a single column with typing effect and button
+        await printToTerminal(sections.research, true);
+        setTimeout(resolve, typing ? 1500 : 2000);
+        return;
       }
     }
     if (section === 'projects') {
-      // Create a container for the grid
       let grid = document.createElement('div');
-      // Set the inner HTML to the projects section content
       grid.innerHTML = sections.projects;
-      // Find the grid element
       let gridEl = grid.querySelector('.terminal-card-grid');
       if (gridEl) {
-        // Check if we should animate the cards
         const shouldAnimate = !noAnimation && !projectCardsAnimated;
-        // Process each card
         const cards = Array.from(gridEl.children);
         cards.forEach((card, index) => {
-          // Reset classes and add base class
           card.className = 'terminal-card';
           if (shouldAnimate) {
-            // Add animation class with delay
             card.classList.add('animate');
-            // Add event listener to remove animation class after it completes
             card.addEventListener('animationend', function onAnimationEnd() {
               card.classList.remove('animate');
               card.classList.add('static');
               card.removeEventListener('animationend', onAnimationEnd);
             }, { once: true });
           } else {
-            // Show cards without animation
             card.classList.add('static');
           }
         });
-        // Mark that we've shown the animation
         if (shouldAnimate) {
           projectCardsAnimated = true;
         }
       }
-      // Append the grid to the terminal output
       terminalOutput.appendChild(grid);
       scrollTerminalToBottom();
-      // Ensure ASCII art colors are set for the current theme
       updateAsciiArtColor();
-      // Resolve after a short delay to allow the animation to start
       setTimeout(resolve, 100);
-    } else {
-      // For normal sections
+    } else if (section !== 'resume' && section !== 'research') {
       await printToTerminal(sections[section], typing);
       setTimeout(resolve, typing ? 1500 : 2000);
     }
   });
 }
 
-function showInteractiveContact() {
+function showInteractiveContact(showAscii) {
   return new Promise(resolve => {
-    printToTerminal(`<span style="color:${getAsciiArtColor()}">${asciiArt.contact}</span>`);
+    if (showAscii) {
+      printToTerminal(`<span style="color:${getAsciiArtColor()}" data-ascii-art>${asciiArt.contact}</span>`);
+    } else {
+      printToTerminal(`<span style="color:var(--accent);font-size:1.5em;font-weight:bold;text-transform:uppercase;">contact</span>`);
+    }
     printToTerminal('<span style="color:var(--ffb86c)">Let\'s Connect!</span>', true);
     setTimeout(() => {
-      // Start interactive contact mode
       contactMode = true;
       contactStep = 0;
       contactData = { name: '', email: '', message: '' };
@@ -1142,10 +1199,441 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Mobile-specific optimizations
+let isMobile = false;
+let isLandscape = false;
+let viewportHeight = window.innerHeight;
+let viewportWidth = window.innerWidth;
+
+// Detect mobile device
+function detectMobile() {
+  isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+             window.innerWidth <= 768 || 
+             ('ontouchstart' in window);
+  
+  // Update viewport dimensions
+  viewportHeight = window.innerHeight;
+  viewportWidth = window.innerWidth;
+  isLandscape = viewportWidth > viewportHeight;
+  
+  // Add mobile class to body
+  if (isMobile) {
+    document.body.classList.add('mobile-device');
+  } else {
+    document.body.classList.remove('mobile-device');
+  }
+  
+  // Adjust terminal input for mobile
+  if (isMobile) {
+    const terminalInput = document.getElementById('terminal-input');
+    if (terminalInput) {
+      terminalInput.setAttribute('inputmode', 'text');
+      terminalInput.setAttribute('autocorrect', 'off');
+      terminalInput.setAttribute('autocapitalize', 'off');
+      terminalInput.setAttribute('spellcheck', 'false');
+    }
+  }
+}
+
+// Handle viewport changes
+function handleViewportChange() {
+  detectMobile();
+  
+  // Adjust game canvas sizes for mobile
+  if (snakeGameActive && snakeGame) {
+    const canvas = document.getElementById('snake-canvas');
+    if (canvas && isMobile) {
+      const size = Math.min(viewportWidth * 0.9, viewportHeight * 0.6, 400);
+      canvas.width = size;
+      canvas.height = size;
+      canvas.style.width = size + 'px';
+      canvas.style.height = size + 'px';
+    }
+  }
+  
+  if (tetrisGameActive && tetrisGame) {
+    const canvas = document.getElementById('tetris-canvas');
+    if (canvas && isMobile) {
+      const width = Math.min(viewportWidth * 0.9, 300);
+      const height = Math.min(viewportHeight * 0.7, 600);
+      canvas.width = width;
+      canvas.height = height;
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+    }
+  }
+}
+
+// Mobile keyboard handling
+function setupMobileKeyboard() {
+  if (!isMobile) return;
+  
+  const terminalInput = document.getElementById('terminal-input');
+  if (!terminalInput) return;
+  
+  // Prevent zoom on focus
+  terminalInput.addEventListener('focus', function() {
+    // Small delay to ensure the input is focused
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      document.body.scrollTop = 0;
+      // --- FIX: Scroll input into view above keyboard ---
+      terminalInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  });
+  
+  // Handle mobile keyboard events
+  terminalInput.addEventListener('input', function(e) {
+    // Auto-scroll to bottom when typing
+    scrollTerminalToBottom();
+  });
+  
+  // Handle mobile keyboard show/hide
+  let initialViewportHeight = window.innerHeight;
+  
+  window.addEventListener('resize', function() {
+    if (window.innerHeight < initialViewportHeight) {
+      // Keyboard is shown
+      document.body.classList.add('keyboard-open');
+    } else {
+      // Keyboard is hidden
+      document.body.classList.remove('keyboard-open');
+    }
+  });
+}
+
+// Mobile touch optimizations
+function setupMobileTouch() {
+  if (!isMobile) return;
+  
+  // Prevent double-tap zoom
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', function(event) {
+    const now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, false);
+  
+  // Improve touch scrolling
+  const terminalInner = document.querySelector('.terminal-inner');
+  if (terminalInner) {
+    terminalInner.style.webkitOverflowScrolling = 'touch';
+  }
+  
+  // Add touch feedback for cards
+  const cards = document.querySelectorAll('.terminal-card');
+  cards.forEach(card => {
+    card.addEventListener('touchstart', function() {
+      this.style.transform = 'scale(0.98)';
+    });
+    
+    card.addEventListener('touchend', function() {
+      this.style.transform = '';
+    });
+  });
+}
+
+// Mobile game controls
+function setupMobileGameControls() {
+  if (!isMobile) return;
+  // Remove tap-to-rotate for Snake. Only allow swipe for direction.
+  let snakeStartX, snakeStartY;
+  document.addEventListener('touchstart', function(e) {
+    if (snakeGameActive && snakeGame) {
+      snakeStartX = e.touches[0].clientX;
+      snakeStartY = e.touches[0].clientY;
+    }
+  });
+  document.addEventListener('touchend', function(e) {
+    if (snakeGameActive && snakeGame && snakeStartX !== undefined && snakeStartY !== undefined) {
+      const endX = e.changedTouches[0].clientX;
+      const endY = e.changedTouches[0].clientY;
+      const deltaX = endX - snakeStartX;
+      const deltaY = endY - snakeStartY;
+      const minSwipeDistance = 30;
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Horizontal swipe
+        if (Math.abs(deltaX) > minSwipeDistance) {
+          if (deltaX > 0) {
+            snakeGame.handleKey({ key: 'ArrowRight' });
+          } else {
+            snakeGame.handleKey({ key: 'ArrowLeft' });
+          }
+        }
+      } else {
+        // Vertical swipe
+        if (Math.abs(deltaY) > minSwipeDistance) {
+          if (deltaY > 0) {
+            snakeGame.handleKey({ key: 'ArrowDown' });
+          } else {
+            snakeGame.handleKey({ key: 'ArrowUp' });
+          }
+        }
+      }
+      snakeStartX = undefined;
+      snakeStartY = undefined;
+    }
+  });
+  // Add swipe controls for Tetris
+  let tetrisStartX, tetrisStartY;
+  document.addEventListener('touchstart', function(e) {
+    if (tetrisGameActive && tetrisGame) {
+      tetrisStartX = e.touches[0].clientX;
+      tetrisStartY = e.touches[0].clientY;
+    }
+  });
+  
+  document.addEventListener('touchend', function(e) {
+    if (tetrisGameActive && tetrisGame && tetrisStartX !== undefined && tetrisStartY !== undefined) {
+      const endX = e.changedTouches[0].clientX;
+      const endY = e.changedTouches[0].clientY;
+      const deltaX = endX - tetrisStartX;
+      const deltaY = endY - tetrisStartY;
+      const minSwipeDistance = 30;
+      
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Horizontal swipe
+        if (Math.abs(deltaX) > minSwipeDistance) {
+          if (deltaX > 0) {
+            tetrisGame.handleKey({ key: 'ArrowRight' });
+          } else {
+            tetrisGame.handleKey({ key: 'ArrowLeft' });
+          }
+        }
+      } else {
+        // Vertical swipe
+        if (Math.abs(deltaY) > minSwipeDistance) {
+          if (deltaY > 0) {
+            tetrisGame.handleKey({ key: 'ArrowDown' });
+          } else {
+            tetrisGame.handleKey({ key: 'ArrowUp' });
+          }
+        }
+      }
+      
+      tetrisStartX = undefined;
+      tetrisStartY = undefined;
+    }
+  });
+  
+  // Add tap controls for 2048
+  document.addEventListener('touchstart', function(e) {
+    if (window._2048GameActive && window._2048Game) {
+      const touch = e.touches[0];
+      const boardWrap = document.querySelector('#game2048-overlay > div');
+      if (boardWrap) {
+        const rect = boardWrap.getBoundingClientRect();
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+        
+        // Determine swipe direction based on touch position relative to center
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const minSwipeDistance = 20;
+        
+        if (Math.abs(x - centerX) > Math.abs(y - centerY)) {
+          // Horizontal swipe
+          if (Math.abs(x - centerX) > minSwipeDistance) {
+            if (x > centerX) {
+              window._2048Game.handleKey({ key: 'ArrowRight' });
+            } else {
+              window._2048Game.handleKey({ key: 'ArrowLeft' });
+            }
+          }
+        } else {
+          // Vertical swipe
+          if (Math.abs(y - centerY) > minSwipeDistance) {
+            if (y > centerY) {
+              window._2048Game.handleKey({ key: 'ArrowDown' });
+            } else {
+              window._2048Game.handleKey({ key: 'ArrowUp' });
+            }
+          }
+        }
+      }
+    }
+  });
+  // --- SNAKE GAME TOUCH: Add tap-to-rotate for accessibility ---
+  document.addEventListener('touchend', function(e) {
+    if (snakeGameActive && snakeGame) {
+      if (e.changedTouches.length === 1 && e.changedTouches[0].target.id === 'snake-canvas') {
+        // If tap (not swipe), rotate right (simulate ArrowRight)
+        if (snakeGame && typeof snakeGame.handleKey === 'function') {
+          snakeGame.handleKey({ key: 'ArrowRight' });
+        }
+      }
+    }
+  });
+  // --- TETRIS GAME: Tap to rotate ---
+  document.addEventListener('touchend', function(e) {
+    if (tetrisGameActive && tetrisGame) {
+      if (e.changedTouches.length === 1 && e.changedTouches[0].target.id === 'tetris-canvas') {
+        // If tap (not swipe), rotate (simulate ArrowUp)
+        if (tetrisGame && typeof tetrisGame.handleKey === 'function') {
+          tetrisGame.handleKey({ key: 'ArrowUp' });
+        }
+      }
+    }
+  });
+}
+
+// Mobile-specific command suggestions
+function setupMobileCommandSuggestions() {
+  if (!isMobile) return;
+  
+  const commonCommands = ['help', 'about', 'skills', 'projects', 'contact', 'games'];
+  const terminalInput = document.getElementById('terminal-input');
+  
+  if (terminalInput) {
+    terminalInput.addEventListener('input', function(e) {
+      const value = e.target.value.toLowerCase();
+      
+      // Show command suggestions for mobile
+      if (value.length > 0) {
+        const suggestions = commonCommands.filter(cmd => cmd.startsWith(value));
+        if (suggestions.length > 0) {
+          // You could implement a suggestion dropdown here
+          // For now, we'll just log the suggestions
+          console.log('Suggestions:', suggestions);
+        }
+      }
+    });
+  }
+}
+
+// Mobile performance optimizations
+function optimizeForMobile() {
+  if (!isMobile) return;
+  
+  // Reduce animation complexity on mobile
+  const style = document.createElement('style');
+  style.textContent = `
+    @media (max-width: 768px) {
+      .terminal-card {
+        transition: transform 0.2s ease;
+      }
+      
+      .terminal-card:hover {
+        transform: translateY(-2px);
+      }
+      
+      .typing-effect {
+        animation-duration: 0.8s;
+      }
+      
+      /* Hide ASCII art on mobile */
+      .about-ascii, .skills-ascii, .research-ascii {
+        display: none !important;
+      }
+      
+      /* Make skills table mobile-friendly */
+      .skills-flex {
+        flex-direction: column !important;
+        gap: 16px !important;
+      }
+      
+      .skills-table table {
+        font-size: 0.9em !important;
+        border-spacing: 0 8px !important;
+      }
+      
+      .skills-table th,
+      .skills-table td {
+        padding: 8px 12px !important;
+        font-size: 0.85em !important;
+      }
+      
+      .skills-table th:first-child {
+        width: 120px !important;
+        min-width: 120px !important;
+      }
+      
+      /* Make about and research sections mobile-friendly */
+      .about-flex, .research-flex {
+        flex-direction: column !important;
+        gap: 16px !important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+  
+  // Optimize scrolling performance
+  document.body.style.webkitOverflowScrolling = 'touch';
+}
+
+// Initialize mobile optimizations
+function initMobileOptimizations() {
+  detectMobile();
+  setupMobileKeyboard();
+  setupMobileTouch();
+  setupMobileGameControls();
+  setupMobileCommandSuggestions();
+  optimizeForMobile();
+  
+  // Listen for orientation changes
+  window.addEventListener('orientationchange', function() {
+    setTimeout(handleViewportChange, 100);
+  });
+  
+  // Listen for resize events
+  window.addEventListener('resize', handleViewportChange);
+  
+  // Listen for visibility changes (app switching on mobile)
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden && isMobile) {
+      // Re-focus input when returning to app
+      setTimeout(() => {
+        const terminalInput = document.getElementById('terminal-input');
+        if (terminalInput) {
+          terminalInput.focus();
+        }
+      }, 100);
+    }
+  });
+}
+
+// Enhanced scroll function for mobile
+function scrollTerminalToBottom() {
+  // Always scroll to bottom when called, regardless of contactMode
+  // This ensures the terminal scrolls down when contact fields are focused
+  terminalOutput.scrollTop = terminalOutput.scrollHeight;
+  
+  const terminalInner = document.querySelector('.terminal-inner');
+  if (terminalInner) {
+    // Smooth scroll for mobile
+    if (isMobile) {
+      terminalInner.scrollTo({
+        top: terminalInner.scrollHeight,
+        behavior: 'smooth'
+      });
+    } else {
+      terminalInner.scrollTop = terminalInner.scrollHeight;
+    }
+  }
+}
+
+// Initialize everything when DOM is loaded
 window.onload = () => {
+  // Initialize mobile optimizations first
+  initMobileOptimizations();
+  
   printToTerminal('<span style="color:var(--accent)">      ▄▀▄     ▄▀▄\n     ▄█░░▀▀▀▀▀░░█▄\n ▄▄  █░░░░░░░░░░░█   ▄▄\n█▄▄█ █░░▀░░┬░░▀░░█  █▄▄█\n █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█\n █░░╦─╦╔╗╦─╔╗╔╗╔╦╗╔╗░░█\n █░░║║║╠─║ ║─║║║║║╠─░░█\n █░░╚╩╝╚╝╚╝╚╝╚╝╩─╩╚╝░░█\n █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█</span>', false);
   printToTerminal('Type <b>help</b> to see available commands.', true);
-  terminalInput.focus();
+  
+  // Focus input with mobile considerations
+  const terminalInput = document.getElementById('terminal-input');
+  if (terminalInput) {
+    // Delay focus on mobile to prevent keyboard popup
+    if (isMobile) {
+      setTimeout(() => {
+        terminalInput.focus();
+      }, 500);
+    } else {
+      terminalInput.focus();
+    }
+  }
 };
 
 document.querySelector('.terminal-inner').addEventListener('click', function(e) {
@@ -1334,7 +1822,7 @@ function startSnakeGame() {
     msgDiv.style.fontFamily = 'Fira Mono, Consolas, Courier New, monospace';
     msgDiv.style.marginTop = '8px';
   }
-  msgDiv.innerHTML = 'Type <b>stop</b> or press <b>Esc</b> to exit.';
+  msgDiv.innerHTML = isMobile ? 'Swipe to control. Type <b>stop</b> or press <b>Esc</b> to exit.' : 'Type <b>stop</b> or press <b>Esc</b> to exit.';
   // Add to overlay
   snakeOverlay.appendChild(canvas);
   snakeOverlay.appendChild(scoreDiv);
@@ -1551,7 +2039,7 @@ function startTetrisGame() {
   msgDiv.style.color = getGameAccent();
   msgDiv.style.fontFamily = 'Fira Mono, Consolas, Courier New, monospace';
   msgDiv.style.marginTop = '8px';
-  msgDiv.innerHTML = 'Type <b>stop</b> or press <b>Esc</b> to exit.';
+  msgDiv.innerHTML = isMobile ? 'Swipe to control. Type <b>stop</b> or press <b>Esc</b> to exit.' : 'Type <b>stop</b> or press <b>Esc</b> to exit.';
   // Add to overlay
   tetrisOverlay.appendChild(canvas);
   tetrisOverlay.appendChild(scoreDiv);
@@ -2551,26 +3039,9 @@ function forceClearAllGames() {
 if (typeof window !== 'undefined') {
   document.addEventListener('click', function(e) {
     if (e.target && e.target.id === 'view-resume-btn') {
-      // Create modal overlay
-      let modal = document.createElement('div');
-      modal.id = 'resume-modal';
-      modal.style.position = 'fixed';
-      modal.style.top = '0';
-      modal.style.left = '0';
-      modal.style.width = '100vw';
-      modal.style.height = '100vh';
-      modal.style.background = 'rgba(24,24,26,0.98)';
-      modal.style.display = 'flex';
-      modal.style.alignItems = 'center';
-      modal.style.justifyContent = 'center';
-      modal.style.zIndex = '9999';
-      modal.innerHTML = `
-        <div style="background:var(--bg);padding:24px 18px;border-radius:10px;max-width:90vw;max-height:90vh;box-shadow:0 4px 32px #000a;position:relative;display:flex;flex-direction:column;align-items:center;">
-          <button id="close-resume-modal" style="position:absolute;top:10px;right:10px;background:var(--accent);color:var(--bg);border:none;border-radius:4px;padding:4px 10px;font-size:1em;cursor:pointer;">Close</button>
-          <iframe src="Resume.pdf" style="width:70vw;height:75vh;border:none;border-radius:6px;box-shadow:0 2px 8px #0002;background:#fff;"></iframe>
-        </div>
-      `;
-      document.body.appendChild(modal);
+      // Always open the Google Drive link in a new tab, on all platforms
+      window.open('https://drive.google.com/file/d/1dZ-NJSqEC_-7WhmmMnoQrD6PuVJjmfcw/view?usp=sharing', '_blank');
+      return;
     }
     if (e.target && e.target.id === 'close-resume-modal') {
       let modal = document.getElementById('resume-modal');
