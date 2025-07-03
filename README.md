@@ -36,7 +36,7 @@ An interactive, terminal-style portfolio website that showcases my projects, ski
 
 ## 🚀 Live Demo
 
-Visit the live portfolio: **[pawishrajhen.com]((https://pawish-terminal.vercel.app/))**
+Visit the live portfolio: **[https://pawish-terminal.vercel.app/]**
 
 ## 🛠️ Technologies Used
 
