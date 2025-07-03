@@ -39,6 +39,12 @@
   --info: #7fffd4;
 }
 
+/* Mobile-first base styles */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -50,6 +56,11 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  /* Mobile-specific improvements */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Prevent zoom on input focus */
+  touch-action: manipulation;
 }
 
 .terminal-outer {
@@ -70,6 +81,8 @@ body {
   left: 0;
   border-radius: 0;
   box-shadow: none;
+  /* Mobile safety area support */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 .terminal-header {
@@ -83,6 +96,9 @@ body {
   user-select: none;
   flex-wrap: nowrap;
   justify-content: center;
+  /* Mobile improvements */
+  min-height: 60px;
+  touch-action: none;
 }
 
 .header-left {
@@ -136,6 +152,9 @@ body {
   scrollbar-width: thin;
   height: 100%;
   box-sizing: border-box;
+  /* Mobile improvements */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 .terminal-inner::-webkit-scrollbar {
@@ -153,6 +172,9 @@ body {
   font-family: inherit;
   margin-bottom: 8px;
   color: var(--fg);
+  /* Mobile improvements */
+  line-height: 1.4;
+  hyphens: auto;
 }
 
 .terminal-prompt {
@@ -176,6 +198,11 @@ body {
   font-family: inherit;
   font-size: 1.08em;
   width: 90%;
+  /* Mobile improvements */
+  min-height: 44px;
+  padding: 8px 0;
+  -webkit-appearance: none;
+  border-radius: 0;
 }
 
 #terminal-input:focus {
@@ -198,68 +225,59 @@ body {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  overflow-x: hidden;
 }
 
 .terminal-card {
-  aspect-ratio: 1 / 1;
-  min-width: 0;
-  min-height: 240px;
-  max-width: 100%;
-  width: 100%;
-  background: var(--bg);
+  background: rgba(255,255,255,0.03);
+  border: 2px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1.2rem;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
   position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px var(--card-shadow);
+  backdrop-filter: blur(8px);
+  min-height: 160px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 1.2rem;
-  border-radius: 4px;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 2px solid var(--card-border);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  color: var(--fg);
-  margin-bottom: 8px;
-  word-break: break-word;
-  overflow-wrap: break-word;
-  box-sizing: border-box;
-  max-height: 340px;
+  /* Mobile improvements */
+  touch-action: manipulation;
+  cursor: pointer;
 }
 
 .terminal-card.animate {
+  animation: cardAppear 0.6s cubic-bezier(0.4,0,0.2,1) forwards;
   opacity: 0;
   transform: translateY(20px);
-  animation: cardAppear 0.6s ease-out forwards;
 }
 
 .terminal-card.static {
   opacity: 1;
   transform: none;
-  animation: none !important;
 }
 
 @keyframes cardAppear {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  to { opacity: 1; transform: translateY(0); }
 }
+
 .terminal-card h3, .terminal-card p, .terminal-card .logo-bottom-text, .terminal-card .bottom-text {
-  color: var(--accent);
+  margin: 0;
+  transition: color 0.3s ease;
 }
+
 .terminal-card .logo svg {
-  fill: var(--accent);
-  stroke: var(--accent);
+  transition: all 0.3s ease;
 }
+
 .terminal-card .border {
-  border: 2px solid var(--card-border);
+  transition: all 0.3s ease;
 }
+
 .terminal-card:hover {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 10px 10px -5px rgba(0, 0, 0, 0.06);
-  border-color: var(--card-hover);
-  background: rgba(255, 184, 108, 0.08);
-  z-index: 1;
+  border-color: var(--card-hover-border);
+  box-shadow: 0 8px 32px var(--card-hover-shadow);
+  transform: translateY(-4px);
 }
 
 .terminal-card:hover h3 {
@@ -267,186 +285,181 @@ body {
 }
 
 .terminal-card:hover .github-link {
-  background: var(--card-hover);
+  opacity: 1;
+  transform: scale(1.1);
 }
 
 .terminal-card:hover .github-link svg {
-  fill: var(--bg);
+  fill: var(--card-hover);
 }
 
 .terminal-card .content {
-  text-align: left;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 0.7rem;
-  word-break: break-word;
-  overflow-wrap: break-word;
-  flex: 1 1 auto;
-  padding: 0;
+  height: 100%;
+  position: relative;
+  z-index: 2;
 }
 
 .terminal-card h3 {
   color: var(--accent);
-  margin: 0 0 0.4rem 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  white-space: normal;
-  max-width: 100%;
+  font-size: 1.3em;
+  font-weight: bold;
+  margin-bottom: 12px;
+  line-height: 1.3;
+  /* Mobile improvements */
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .terminal-card p {
   color: var(--fg);
-  margin: 0;
-  font-size: 0.92rem;
+  font-size: 0.95em;
   line-height: 1.5;
+  margin-bottom: 16px;
   flex-grow: 1;
-  white-space: normal;
+  /* Mobile improvements */
   word-break: break-word;
-  overflow-wrap: break-word;
-  max-height: 7.5em;
-  overflow-y: auto;
+  hyphens: auto;
 }
 
 .terminal-card .github-link {
-  display: flex;
+  align-self: flex-end;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 32px;
   height: 32px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.08);
-  transition: all 0.2s ease;
-  margin-top: 0.5rem;
-  align-self: flex-end;
-  box-shadow: none;
-  border: none;
-  flex-shrink: 0;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.05);
+  /* Mobile improvements */
+  min-width: 44px;
+  min-height: 44px;
+  touch-action: manipulation;
 }
 
 .terminal-card .github-link svg {
   width: 20px;
   height: 20px;
   fill: var(--accent);
-  opacity: 0.85;
-  transition: fill 0.2s, opacity 0.2s;
-  display: block;
+  transition: all 0.3s ease;
 }
 
 .terminal-card .github-link:hover {
-  background: var(--card-hover);
-  box-shadow: 0 2px 8px var(--card-hover-shadow);
+  background: rgba(255,255,255,0.1);
+  transform: scale(1.1);
 }
 
 .terminal-card .github-link:hover svg {
-  fill: var(--bg);
-  opacity: 1;
+  fill: var(--card-hover);
 }
 
 .terminal-card .logo-bottom-text, .terminal-card .bottom-text {
-  color: var(--accent);
+  font-size: 0.85em;
+  color: var(--fg);
+  opacity: 0.8;
+  text-align: center;
+  margin-top: 8px;
 }
 
 .typing-effect {
-  display: inline-block;
-  font-family: inherit;
-  color: var(--accent);
-  white-space: pre-wrap;
   border-right: 2px solid var(--accent);
-  animation: blink-cursor 0.8s steps(1) infinite;
+  animation: blink-cursor 1s infinite;
+  padding-right: 2px;
 }
+
 @keyframes blink-cursor {
-  0%, 100% { border-color: var(--accent); }
-  50% { border-color: transparent; }
+  0%, 50% { border-color: var(--accent); }
+  51%, 100% { border-color: transparent; }
 }
 
 .terminal-card .logo {
-  height: 35px;
-  position: relative;
-  width: 33px;
-  overflow: hidden;
-  transition: all 1s ease-in-out;
-}
-.terminal-card .logo .logo1 {
-  height: 33px;
   position: absolute;
-  left: 0;
-}
-.terminal-card .logo .logo2 {
-  height: 33px;
-  position: absolute;
-  left: 33px;
-}
-.terminal-card .logo .trail {
-  position: absolute;
-  right: 0;
-  height: 100%;
-  width: 100%;
-  opacity: 0;
-}
-.terminal-card .logo-bottom-text {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  margin-top: 30px;
-  padding-left: 8px;
-  font-size: 11px;
-  opacity: 0;
-  letter-spacing: none;
-  transition: all 0.5s ease-in-out 0.5s;
-}
-.terminal-card .bottom-text {
-  position: absolute;
-  left: 50%;
-  bottom: 13px;
-  transform: translateX(-50%);
-  font-size: 6px;
-  text-transform: uppercase;
-  padding: 0px 5px 0px 8px;
-  letter-spacing: 7px;
-  transition: all 0.5s ease-in-out;
-}
-.terminal-card .content {
-  transition: all 0.5s ease-in-out;
-}
-.terminal-card:hover .logo {
-  width: 134px;
-  animation: opacity 1s ease-in-out;
-}
-.terminal-card:hover .trail {
-  animation: trail 1s ease-in-out;
-}
-@keyframes opacity {
-  0% { border-right: 1px solid transparent; }
-  10% { border-right: 1px solid #bd9f67; }
-  80% { border-right: 1px solid #bd9f67; }
-  100% { border-right: 1px solid transparent; }
-}
-@keyframes trail {
-  0% { background: linear-gradient(90deg, rgba(189, 159, 103, 0) 90%, rgb(189, 159, 103) 100%); opacity: 0; }
-  30% { background: linear-gradient(90deg, rgba(189, 159, 103, 0) 70%, rgb(189, 159, 103) 100%); opacity: 1; }
-  70% { background: linear-gradient(90deg, rgba(189, 159, 103, 0) 70%, rgb(189, 159, 103) 100%); opacity: 1; }
-  95% { background: linear-gradient(90deg, rgba(189, 159, 103, 0) 90%, rgb(189, 159, 103) 100%); opacity: 0; }
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  opacity: 0.1;
+  transition: all 0.3s ease;
 }
 
-/* Contact Form Styles */
+.terminal-card .logo .logo1 {
+  animation: opacity 2s ease-in-out infinite;
+}
+
+.terminal-card .logo .logo2 {
+  animation: opacity 2s ease-in-out infinite reverse;
+}
+
+.terminal-card .logo .trail {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent 30%, var(--accent) 50%, transparent 70%);
+  animation: trail 3s linear infinite;
+  opacity: 0.3;
+}
+
+.terminal-card .logo-bottom-text {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7em;
+  color: var(--fg);
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+.terminal-card .bottom-text {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7em;
+  color: var(--fg);
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+.terminal-card .content {
+  position: relative;
+  z-index: 2;
+}
+
+.terminal-card:hover .logo {
+  opacity: 0.2;
+  transform: scale(1.1);
+}
+
+.terminal-card:hover .trail {
+  opacity: 0.5;
+}
+
+@keyframes opacity {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes trail {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
+}
+
 .contact-section {
-  margin: 10px 0;
-  line-height: 1.4;
+  margin: 20px 0;
+  padding: 20px;
 }
 
 .contact-messages {
-  margin: 10px 0;
-  min-height: 20px;
+  margin-bottom: 20px;
 }
 
 .contact-message {
-  margin-bottom: 2px;
-  font-family: inherit;
+  margin-bottom: 10px;
 }
 
 .send-btn-card {
@@ -454,18 +467,24 @@ body {
   color: var(--bg);
   border: 2px solid var(--accent);
   border-radius: 8px;
-  padding: 10px 20px;
+  padding: 12px 24px;
   font-family: inherit;
+  font-size: 1em;
   font-weight: bold;
-  font-size: 0.95em;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px #000a;
+  text-decoration: none;
+  display: inline-block;
+  /* Mobile improvements */
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .send-btn-card:hover {
   background: var(--card-hover);
-  color: #fff;
   border-color: var(--card-hover);
   transform: translateY(-2px);
   box-shadow: 0 4px 16px var(--card-hover-shadow);
@@ -473,89 +492,84 @@ body {
 
 .send-btn-card:active {
   transform: translateY(0);
+  box-shadow: 0 2px 8px var(--card-hover-shadow);
 }
 
-/* Social Icons Header - Uiverse.io inspired */
 .wrapper {
   display: flex;
+  gap: 8px;
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: 15px;
   align-items: center;
-  margin-left: auto;
-  flex-shrink: 0;
+  height: 40px;
 }
 
 .icon {
-  width: 24px;
-  height: 24px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 4px;
-}
-
-.icon a {
-  color: inherit;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+  /* Mobile improvements */
+  min-width: 44px;
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+.icon a {
   width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.3s ease;
 }
 
 .icon:hover {
   transform: translateY(-2px);
-  opacity: 0.9;
+  box-shadow: 0 4px 16px rgba(255,255,255,0.1);
 }
 
 .wrapper .icon {
-  position: relative;
-  background: #fff;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  font-size: 18px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  cursor: pointer;
-  transition: transform 0.18s cubic-bezier(0.68,-0.55,0.265,1.55), color 0.3s;
-  color: var(--accent);
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
 .wrapper .icon svg {
-  width: 22px;
-  height: 22px;
-  display: block;
+  width: 18px;
+  height: 18px;
+  transition: all 0.3s ease;
 }
 
 .wrapper .icon:hover {
-  transform: scale(1.1);
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.2);
 }
 
 .wrapper .icon.github:hover {
-  color: #6e5494;
+  background: rgba(36,41,46,0.8);
 }
 
 .icon.linkedin:hover {
-  color: #0077b5;
+  background: rgba(0,119,181,0.8);
 }
 
 .icon.instagram:hover {
-  color: #e1306c;
-  background: #fdeaf1;
+  background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
 }
 
 .icon.mail:hover {
-  color: #d44638;
+  background: rgba(234,67,53,0.8);
 }
 
-/* Remove tooltip styles from previous code */
 .wrapper .tooltip { display: none !important; }
 
 /* Responsive: keep icons aligned right of username */
@@ -628,6 +642,8 @@ body {
   z-index: 100;
   transition: opacity 0.4s;
   opacity: 1;
+  /* Mobile improvements */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 #game2048-board {
   display: grid;
@@ -657,6 +673,8 @@ body {
   transition: all 0.2s;
   user-select: none;
   box-shadow: 0 2px 8px #0002;
+  /* Mobile improvements */
+  touch-action: manipulation;
 }
 #game2048-score {
   text-align: center;
@@ -699,6 +717,8 @@ body {
   z-index: 100;
   transition: opacity 0.4s;
   opacity: 1;
+  /* Mobile improvements */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 #whackamole-board {
   display: grid;
@@ -730,6 +750,10 @@ body {
   box-shadow: 0 2px 8px #0002;
   cursor: pointer;
   position: relative;
+  /* Mobile improvements */
+  touch-action: manipulation;
+  min-height: 44px;
+  min-width: 44px;
 }
 .whack-mole {
   width: 60%;
@@ -854,6 +878,7 @@ body, html, .terminal-outer, .terminal-inner, #terminal-output {
   padding-left: 18px;
 }
 
+/* Enhanced Mobile Responsiveness */
 @media (max-width: 800px) {
   .terminal-card-grid {
     grid-template-columns: 1fr;
@@ -868,21 +893,97 @@ body, html, .terminal-outer, .terminal-inner, #terminal-output {
     padding: 1.1rem;
     font-size: 0.98em;
   }
+  
+  /* Improve table readability on mobile */
+  .skills-section table {
+    font-size: 0.9em;
+  }
+  
+  .skills-section th,
+  .skills-section td {
+    padding: 8px 4px;
+  }
+  
+  /* Improve ASCII art on mobile */
+  #terminal-output pre {
+    font-size: 0.8em;
+    line-height: 1.2;
+    overflow-x: auto;
+    white-space: pre;
+    word-break: keep-all;
+  }
 }
 
 @media (max-width: 600px) {
   .terminal-header {
-    flex-direction: column;
-    gap: 8px;
-    padding: 8px 2vw;
+    padding: 6px 8px 6px 8px;
+    min-height: 48px;
+    height: 48px;
+    border-bottom: 1.5px solid #444;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    background: var(--header-bg);
+    position: relative;
+    z-index: 10;
+    /* Safe area for notched devices */
+    padding-top: calc(env(safe-area-inset-top, 0px) + 6px);
   }
   .terminal-title {
-    font-size: 0.95em;
-    margin-bottom: 4px;
+    font-size: 1.18em;
+    font-weight: 600;
+    letter-spacing: 0.7px;
+    color: var(--accent);
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    z-index: 2;
+    text-align: center;
+    width: 80vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .terminal-inner {
-    padding: 8px 2vw 0 2vw;
-    font-size: 0.95em;
+  .header-left {
+    display: flex;
+    gap: 5px;
+    flex: 0 0 auto;
+  }
+  .header-right {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-left: auto;
+  }
+  .wrapper {
+    display: flex;
+    gap: 10px;
+    padding: 0;
+    margin: 0;
+  }
+  .wrapper .icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    font-size: 1.3em;
+    margin: 0 2px;
+  }
+  .wrapper .icon svg {
+    width: 1.5em;
+    height: 1.5em;
+  }
+  .wrapper .icon:active, .wrapper .icon:focus {
+    background: var(--card-hover);
+  }
+  .btn {
+    width: 11px;
+    height: 11px;
+    margin-right: 4px;
   }
   .terminal-card-grid {
     grid-template-columns: 1fr;
@@ -896,6 +997,7 @@ body, html, .terminal-outer, .terminal-inner, #terminal-output {
     width: 100%;
     max-width: 100vw;
     font-size: 0.95em;
+    min-height: 120px;
   }
   .send-btn-card, .icon {
     min-width: 44px;
@@ -905,6 +1007,184 @@ body, html, .terminal-outer, .terminal-inner, #terminal-output {
   #terminal-input {
     font-size: 1em;
     min-height: 40px;
+  }
+  
+  /* Mobile-specific improvements */
+  .terminal-card h3 {
+    font-size: 1.1em;
+    margin-bottom: 8px;
+  }
+  
+  .terminal-card p {
+    font-size: 0.9em;
+    line-height: 1.4;
+  }
+  
+  /* Improve contact form on mobile */
+  .contact-section {
+    padding: 16px;
+    margin: 16px 0;
+  }
+  
+  /* Better touch targets for games */
+  #snake-canvas,
+  #tetris-canvas {
+    max-width: 90vw;
+    max-height: 90vw;
+  }
+  
+  /* Improve ASCII art readability */
+  #terminal-output pre {
+    font-size: 0.7em;
+    line-height: 1.1;
+  }
+  
+  /* Better spacing for mobile */
+  #terminal-output > div {
+    margin-bottom: 16px;
+  }
+  
+  /* Improve button spacing */
+  .send-btn-card {
+    margin: 8px 4px;
+    padding: 10px 20px;
+  }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 480px) {
+  .terminal-header {
+    min-height: 44px;
+    height: 44px;
+    padding: 4px 4px 4px 4px;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 4px);
+  }
+  .terminal-title {
+    font-size: 1.05em;
+    width: 90vw;
+  }
+  .wrapper .icon {
+    width: 28px;
+    height: 28px;
+    font-size: 1.1em;
+  }
+  .btn {
+    width: 9px;
+    height: 9px;
+    margin-right: 2px;
+  }
+  .terminal-card {
+    padding: 0.6rem;
+    font-size: 0.9em;
+    min-height: 100px;
+  }
+  .terminal-card h3 {
+    font-size: 1em;
+  }
+  .terminal-card p {
+    font-size: 0.85em;
+  }
+  
+  /* Smaller ASCII art for very small screens */
+  #terminal-output pre {
+    font-size: 0.6em;
+    line-height: 1.0;
+  }
+  
+  /* Adjust game sizes for very small screens */
+  #game2048-board,
+  #whackamole-board {
+    width: 98vw;
+    height: 98vw;
+    gap: 4px;
+    padding: 4px;
+  }
+  
+  #game2048-board div,
+  #whackamole-board div {
+    font-size: 0.8em;
+  }
+  
+  /* Better icon sizing for very small screens */
+  .wrapper .icon {
+    width: 24px;
+    height: 24px;
+    min-width: 32px;
+    min-height: 32px;
+  }
+  
+  .wrapper .icon svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* Landscape mobile optimization */
+@media (max-height: 500px) and (orientation: landscape) {
+  .terminal-header {
+    min-height: 50px;
+    padding: 4px 2vw;
+  }
+  
+  .terminal-inner {
+    padding: 4px 2vw 0 2vw;
+  }
+  
+  .terminal-card-grid {
+    gap: 12px 0;
+  }
+  
+  .terminal-card {
+    min-height: 80px;
+    padding: 0.5rem;
+  }
+  
+  /* Adjust game sizes for landscape */
+  #game2048-board,
+  #whackamole-board {
+    width: 70vw;
+    height: 70vw;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .terminal-card {
+    border-width: 1px;
+  }
+  
+  .btn {
+    border-width: 1px;
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .terminal-card.animate {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Dark mode support for system preference */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #18181a;
+    --fg: #e0e0e0;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #fff;
+    --fg: #23272e;
   }
 }
 
@@ -928,6 +1208,21 @@ body, html, .terminal-outer, .terminal-inner, #terminal-output {
   border: 0;
 }
 
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .terminal-card {
+    border-width: 3px;
+  }
+  
+  .send-btn-card {
+    border-width: 3px;
+  }
+  
+  .icon {
+    border-width: 2px;
+  }
+}
+
 /* --- ARIA/SEMANTIC HINTS FOR HTML --- */
 /*
 - Add role="main" to .terminal-inner
@@ -937,4 +1232,821 @@ body, html, .terminal-outer, .terminal-inner, #terminal-output {
 */
 
 /* Utility: visually hidden for ARIA labels */
-/* Usage: <span class="visually-hidden">Screen reader text</span> */ 
+/* Usage: <span class="visually-hidden">Screen reader text</span> */
+
+/* --- MOBILE-SPECIFIC IMPROVEMENTS --- */
+
+/* Mobile device class */
+.mobile-device {
+  /* Prevent text selection on mobile */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  
+  /* Improve touch scrolling */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Mobile keyboard open state */
+.keyboard-open .terminal-outer {
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.keyboard-open .terminal-inner {
+  padding-bottom: 20px;
+}
+
+/* Mobile touch improvements */
+@media (max-width: 768px) {
+  /* Larger touch targets */
+  .terminal-card {
+    min-height: 120px;
+    padding: 16px;
+  }
+  
+  .terminal-card .github-link {
+    min-width: 48px;
+    min-height: 48px;
+    width: 48px;
+    height: 48px;
+  }
+  
+  .terminal-card .github-link svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  /* Better button sizing */
+  .send-btn-card {
+    min-width: 48px;
+    min-height: 48px;
+    padding: 12px 20px;
+    font-size: 1.1em;
+  }
+  
+  /* Improve social icons */
+  .wrapper .icon {
+    min-width: 48px;
+    min-height: 48px;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .wrapper .icon svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* Better input field */
+  #terminal-input {
+    min-height: 48px;
+    font-size: 1.1em;
+    padding: 12px 0;
+  }
+  
+  /* Improve scrolling */
+  .terminal-inner {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+  
+  /* Better card spacing */
+  .terminal-card-grid {
+    gap: 16px 0;
+    padding: 0 8px;
+  }
+  
+  /* Improve text readability */
+  .terminal-card h3 {
+    font-size: 1.2em;
+    line-height: 1.3;
+    margin-bottom: 10px;
+  }
+  
+  .terminal-card p {
+    font-size: 0.95em;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  
+  /* Better ASCII art scaling */
+  #terminal-output pre {
+    font-size: 0.75em;
+    line-height: 1.2;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Improve table readability */
+  .skills-section table {
+    font-size: 0.85em;
+  }
+  
+  .skills-section th,
+  .skills-section td {
+    padding: 10px 6px;
+  }
+  
+  /* Better contact form */
+  .contact-section {
+    padding: 20px 16px;
+  }
+  
+  /* Improve game overlays */
+  #snake-overlay,
+  #tetris-overlay,
+  #game2048-overlay,
+  #whackamole-overlay {
+    padding: 20px 16px;
+  }
+  
+  /* Better game canvas sizing */
+  #snake-canvas,
+  #tetris-canvas {
+    max-width: 90vw;
+    max-height: 60vh;
+  }
+  
+  /* Improve game controls */
+  #snake-score,
+  #tetris-score,
+  #game2048-score,
+  #whackamole-info {
+    font-size: 1.1em;
+    margin: 16px 0;
+  }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 480px) {
+  .terminal-header {
+    padding: 8px 12px;
+    min-height: 60px;
+  }
+  
+  .terminal-title {
+    font-size: 0.9em;
+  }
+  
+  .terminal-inner {
+    padding: 12px 16px 0 16px;
+    font-size: 0.9em;
+  }
+  
+  .terminal-card {
+    padding: 12px;
+    min-height: 100px;
+  }
+  
+  .terminal-card h3 {
+    font-size: 1.1em;
+  }
+  
+  .terminal-card p {
+    font-size: 0.9em;
+  }
+  
+  /* Smaller ASCII art */
+  #terminal-output pre {
+    font-size: 0.65em;
+    line-height: 1.1;
+  }
+  
+  /* Adjust game sizes */
+  #game2048-board,
+  #whackamole-board {
+    width: 95vw;
+    height: 95vw;
+    gap: 6px;
+    padding: 8px;
+  }
+  
+  #game2048-board div,
+  #whackamole-board div {
+    font-size: 0.9em;
+  }
+  
+  /* Better icon sizing */
+  .wrapper .icon {
+    width: 36px;
+    height: 36px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+  
+  .wrapper .icon svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  /* Improve button sizing */
+  .send-btn-card {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px 16px;
+    font-size: 1em;
+  }
+  
+  /* Better input sizing */
+  #terminal-input {
+    min-height: 44px;
+    font-size: 1em;
+  }
+}
+
+/* Landscape mobile optimization */
+@media (max-height: 500px) and (orientation: landscape) {
+  .terminal-header {
+    min-height: 40px;
+    padding: 4px 12px;
+  }
+  
+  .terminal-inner {
+    padding: 8px 16px 0 16px;
+  }
+  
+  .terminal-card-grid {
+    gap: 8px 0;
+  }
+  
+  .terminal-card {
+    min-height: 80px;
+    padding: 8px;
+  }
+  
+  /* Adjust game sizes for landscape */
+  #game2048-board,
+  #whackamole-board {
+    width: 60vw;
+    height: 60vw;
+  }
+  
+  #snake-canvas,
+  #tetris-canvas {
+    max-width: 70vw;
+    max-height: 50vh;
+  }
+  
+  /* Reduce ASCII art size in landscape */
+  #terminal-output pre {
+    font-size: 0.6em;
+    line-height: 1.0;
+  }
+}
+
+/* Mobile performance optimizations */
+@media (max-width: 768px) {
+  /* Reduce animation complexity */
+  .terminal-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .terminal-card:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* Optimize typing animation */
+  .typing-effect {
+    animation-duration: 0.8s;
+  }
+  
+  /* Reduce shadow complexity */
+  .terminal-card {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .terminal-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  }
+  
+  /* Optimize scrolling */
+  .terminal-inner {
+    will-change: scroll-position;
+  }
+  
+  /* Reduce repaints */
+  .terminal-card {
+    will-change: transform;
+  }
+}
+
+/* Mobile accessibility improvements */
+@media (max-width: 768px) {
+  /* Better focus indicators */
+  .terminal-card:focus,
+  .send-btn-card:focus,
+  .icon:focus {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+  
+  /* Improve contrast for mobile */
+  .terminal-card {
+    background: rgba(255,255,255,0.05);
+  }
+  
+  .terminal-card h3 {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  
+  /* Better text contrast */
+  .terminal-card p {
+    color: var(--fg);
+    opacity: 0.9;
+  }
+  
+  /* Improve button contrast */
+  .send-btn-card {
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 600;
+  }
+  
+  /* Better icon contrast */
+  .wrapper .icon {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+}
+
+/* Mobile-specific game improvements */
+@media (max-width: 768px) {
+  /* Better game canvas sizing */
+  #snake-canvas,
+  #tetris-canvas {
+    border-width: 3px;
+    border-radius: 8px;
+  }
+  
+  /* Improve game text */
+  #snake-score,
+  #tetris-score,
+  #game2048-score,
+  #whackamole-info {
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  }
+  
+  /* Better game board styling */
+  #game2048-board,
+  #whackamole-board {
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  
+  /* Improve game tile styling */
+  #game2048-board div,
+  #whackamole-board div {
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+}
+
+/* Mobile keyboard handling */
+@media (max-width: 768px) {
+  /* Prevent zoom on input focus */
+  #terminal-input {
+    font-size: 16px !important;
+  }
+  
+  /* Better input styling */
+  #terminal-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--fg);
+    font-family: inherit;
+    width: 100%;
+    padding: 8px 0;
+    -webkit-appearance: none;
+    border-radius: 0;
+  }
+  
+  /* Improve input focus */
+  #terminal-input:focus {
+    outline: none;
+    background: rgba(255,255,255,0.05);
+    border-radius: 4px;
+    padding: 8px 4px;
+  }
+}
+
+/* Mobile touch feedback */
+@media (max-width: 768px) {
+  /* Touch feedback for cards */
+  .terminal-card:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+  
+  /* Touch feedback for buttons */
+  .send-btn-card:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+  }
+  
+  /* Touch feedback for icons */
+  .icon:active {
+    transform: scale(0.9);
+    transition: transform 0.1s ease;
+  }
+  
+  /* Remove hover effects on touch devices */
+  .terminal-card:hover {
+    transform: none;
+  }
+  
+  .send-btn-card:hover {
+    transform: none;
+  }
+  
+  .icon:hover {
+    transform: none;
+  }
+}
+
+/* Mobile-specific theme improvements */
+@media (max-width: 768px) {
+  /* Better contrast for mobile themes */
+  .hacker-theme .terminal-card {
+    background: rgba(57, 255, 20, 0.05);
+    border-color: #39ff14;
+  }
+  
+  .hacker-theme .terminal-card:hover {
+    background: rgba(57, 255, 20, 0.1);
+  }
+  
+  /* Improve light theme on mobile */
+  :root[data-theme="light"] .terminal-card {
+    background: rgba(0,0,0,0.05);
+    border-color: var(--card-border);
+  }
+  
+  :root[data-theme="light"] .terminal-card:hover {
+    background: rgba(0,0,0,0.08);
+  }
+}
+
+/* Mobile-specific animations */
+@media (max-width: 768px) {
+  /* Reduce animation duration for better performance */
+  .terminal-card.animate {
+    animation-duration: 0.4s;
+  }
+  
+  /* Optimize typing animation */
+  .typing-effect {
+    animation-duration: 0.6s;
+  }
+  
+  /* Reduce transition times */
+  .terminal-card,
+  .send-btn-card,
+  .icon {
+    transition-duration: 0.2s;
+  }
+}
+
+/* Mobile-specific layout improvements */
+@media (max-width: 768px) {
+  /* Better spacing */
+  .terminal-card-grid {
+    margin: 16px 0;
+  }
+  
+  /* Improve section spacing */
+  #terminal-output > div {
+    margin-bottom: 20px;
+  }
+  
+  /* Better contact form spacing */
+  .contact-section {
+    margin: 24px 0;
+  }
+  
+  /* Improve skills table spacing */
+  .skills-section {
+    margin: 20px 0;
+  }
+  
+  /* Better ASCII art spacing */
+  #terminal-output pre {
+    margin: 16px 0;
+  }
+}
+
+/* Mobile-specific text improvements */
+@media (max-width: 768px) {
+  /* Better text sizing */
+  .terminal-card h3 {
+    font-size: 1.15em;
+    line-height: 1.3;
+  }
+  
+  .terminal-card p {
+    font-size: 0.92em;
+    line-height: 1.5;
+  }
+  
+  /* Improve readability */
+  .terminal-card {
+    letter-spacing: 0.01em;
+  }
+  
+  /* Better contrast for small text */
+  .terminal-card .logo-bottom-text,
+  .terminal-card .bottom-text {
+    opacity: 0.7;
+    font-size: 0.75em;
+  }
+}
+
+/* Mobile-specific interaction improvements */
+@media (max-width: 768px) {
+  /* Better touch targets */
+  .terminal-card {
+    cursor: pointer;
+    -webkit-tap-highlight-color: rgba(255,255,255,0.1);
+  }
+  
+  /* Improve button interaction */
+  .send-btn-card {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Better icon interaction */
+  .icon {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Improve input interaction */
+  #terminal-input {
+    cursor: text;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Mobile-specific performance optimizations */
+@media (max-width: 768px) {
+  /* Optimize rendering */
+  .terminal-card {
+    contain: layout style paint;
+  }
+  
+  /* Reduce repaints */
+  .terminal-inner {
+    contain: layout style;
+  }
+  
+  /* Optimize animations */
+  .terminal-card.animate {
+    will-change: transform, opacity;
+  }
+  
+  /* Optimize scrolling */
+  .terminal-inner {
+    will-change: scroll-position;
+  }
+}
+
+/* Mobile-specific accessibility */
+@media (max-width: 768px) {
+  /* Better focus management */
+  .terminal-card:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+  
+  /* Improve screen reader support */
+  .terminal-card {
+    role: button;
+    tabindex: 0;
+  }
+  
+  /* Better keyboard navigation */
+  .terminal-card:focus {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+  
+  /* Improve color contrast */
+  .terminal-card h3 {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  
+  .terminal-card p {
+    color: var(--fg);
+    opacity: 0.9;
+  }
+}
+
+/* Mobile-specific error handling */
+@media (max-width: 768px) {
+  /* Better error messages */
+  .error-message {
+    background: rgba(255, 85, 85, 0.1);
+    border: 1px solid rgba(255, 85, 85, 0.3);
+    border-radius: 6px;
+    padding: 12px;
+    margin: 8px 0;
+    color: #ff5555;
+    font-size: 0.9em;
+  }
+  
+  /* Better success messages */
+  .success-message {
+    background: rgba(80, 250, 123, 0.1);
+    border: 1px solid rgba(80, 250, 123, 0.3);
+    border-radius: 6px;
+    padding: 12px;
+    margin: 8px 0;
+    color: #50fa7b;
+    font-size: 0.9em;
+  }
+}
+
+/* Mobile-specific loading states */
+@media (max-width: 768px) {
+  /* Better loading indicators */
+  .loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+/* Mobile-specific responsive images */
+@media (max-width: 768px) {
+  /* Optimize images for mobile */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Better SVG scaling */
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* Mobile-specific print styles */
+@media print {
+  .terminal-outer {
+    position: static;
+    height: auto;
+    overflow: visible;
+  }
+  
+  .terminal-header {
+    display: none;
+  }
+  
+  .terminal-inner {
+    padding: 0;
+    overflow: visible;
+  }
+  
+  .terminal-card {
+    break-inside: avoid;
+    margin-bottom: 20px;
+  }
+}
+
+/* Mobile-specific high contrast mode */
+@media (prefers-contrast: high) and (max-width: 768px) {
+  .terminal-card {
+    border-width: 3px;
+    background: rgba(255,255,255,0.1);
+  }
+  
+  .send-btn-card {
+    border-width: 3px;
+    background: var(--accent);
+    color: var(--bg);
+  }
+  
+  .icon {
+    border-width: 2px;
+    background: rgba(255,255,255,0.15);
+  }
+  
+  #terminal-input {
+    border: 2px solid var(--accent);
+    background: rgba(255,255,255,0.1);
+  }
+}
+
+/* Mobile-specific reduced motion */
+@media (prefers-reduced-motion: reduce) and (max-width: 768px) {
+  .terminal-card {
+    transition: none;
+  }
+  
+  .terminal-card.animate {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  
+  .typing-effect {
+    animation: none;
+    border-right: 2px solid var(--accent);
+  }
+  
+  .terminal-card:hover {
+    transform: none;
+  }
+  
+  .send-btn-card:hover {
+    transform: none;
+  }
+  
+  .icon:hover {
+    transform: none;
+  }
+}
+
+/* Mobile-specific dark mode */
+@media (prefers-color-scheme: dark) and (max-width: 768px) {
+  :root {
+    --bg: #000;
+    --fg: #e0e0e0;
+    --terminal-bg: #1a1a1a;
+  }
+  
+  .terminal-card {
+    background: rgba(255,255,255,0.03);
+  }
+}
+
+/* Mobile-specific light mode */
+@media (prefers-color-scheme: light) and (max-width: 768px) {
+  :root {
+    --bg: #ffffff;
+    --fg: #23272e;
+    --terminal-bg: #f5f5f5;
+  }
+  
+  .terminal-card {
+    background: rgba(0,0,0,0.03);
+  }
+}
+
+@media (max-width: 600px) {
+  .mobile-header-prompt {
+    display: inline-block;
+    color: var(--title);
+    font-family: 'Fira Mono', 'Consolas', 'Courier New', monospace;
+    font-size: 1.08em;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding-left: 2px;
+    padding-right: 8px;
+    vertical-align: middle;
+    background: none;
+    border: none;
+    box-shadow: none;
+  }
+  .header-left {
+    margin-left: 0;
+    padding-left: 0;
+  }
+  .traffic-signals {
+    display: none;
+  }
+  .desktop-title {
+    display: none;
+  }
+}
+@media (min-width: 601px) {
+  .mobile-header-prompt {
+    display: none;
+  }
+  .traffic-signals {
+    display: inline-block;
+  }
+  .desktop-title {
+    display: inline-block;
+  }
+} 
