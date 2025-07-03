@@ -36,7 +36,7 @@ An interactive, terminal-style portfolio website that showcases my projects, ski
 
 ## 🚀 Live Demo
 
-Visit the live portfolio: **[https://pawish-terminal.vercel.app/]**
+Visit the live portfolio: **https://pawish-terminal.vercel.app/**
 
 ## 🛠️ Technologies Used
 
@@ -143,7 +143,7 @@ Interactive contact form with:
 ### Installation
 1. Clone the repository:
 ```bash
-git clone https://github.com/PawishrajhenAR/terminal-portfolio.git
+git clone https://github.com/PawishrajhenAR/terminal-folio.git
 ```
 
 2. Navigate to the project directory:
